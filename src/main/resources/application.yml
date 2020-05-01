@@ -1,0 +1,35 @@
+server:
+  port: 8088
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#  servlet:
+#    context-path: decision_sys
+spring:
+  # 本地库
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/decision_sys?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+  devtools:
+    restart:
+      # 热部署
+      enabled: true
+      # 设置重启的目录，检索目录(resources/static、resources/templates)
+      additional-paths: src/main/java
+  # 关闭默认模板引擎缓存,开发时热加载和热更新；项目部署时  注释掉
+  freemarker:
+    cache: false
+    charset: utf-8
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+
+mybatis:
+  mapper-locations: classpath*:**.**/*Mapper.xml
+  type-aliases-package: edu.sxu.decision_sys.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl
+    # 驼峰命名规范
+    map-underscore-to-camel-case: true
+
+logging:
+  config: classpath:log4j2.xml
