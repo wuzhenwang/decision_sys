@@ -110,7 +110,7 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>static/*.*</include>
+                    <include>**/*.*</include>
                 </includes>
             </resource>
         </resources>
