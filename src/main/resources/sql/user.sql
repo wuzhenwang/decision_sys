@@ -15,5 +15,5 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES ('1', '侯治国', 'user', '$2a$10$1H.8AdWIsvdBr5QHkM86aORyQFHDwAVC8EvGjjp3TdZbkJkeRsV0O', '1', '北京', '1@qq.com', '1', 1);
+INSERT INTO `decision_sys`.`user`(`user_id`, `real_name`, `username`, `password`, `phone`, `address`, `email`, `img_path`, `enable`) VALUES ('1', '侯治国', 'user', '$2a$10$1H.8AdWIsvdBr5QHkM86aORyQFHDwAVC8EvGjjp3TdZbkJkeRsV0O', '1', '北京', '1@qq.com', '6a5bc769-79c3-4089-bdd1-f4a28f183273.jpg', 1);
 
