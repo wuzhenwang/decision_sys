@@ -15,12 +15,12 @@
     </resultMap>
 
     <select id="queryById" resultMap="UserResultMap" >
-        select user_id, username,password,phone,address,email,img_path,enable
+        select user_id,real_name,username,password,phone,address,email,img_path,enable
         from user
         where id = #{userId, jdbcType=VARCHAR}
     </select>
     <select id="queryByUsername" resultMap="UserResultMap" >
-        select user_id, username,password,phone,address,email,img_path,enable
+        select user_id,real_name,username,password,phone,address,email,img_path,enable
         from user
         where username = #{username, jdbcType=VARCHAR}
     </select>
