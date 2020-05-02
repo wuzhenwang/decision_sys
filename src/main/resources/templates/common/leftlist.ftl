@@ -46,7 +46,8 @@
 	style="padding: 0; margin: 0; display: block;">
 	<div class="col-md-12 green-g">
 		<a href="index" class="navbar-brand" style="padding: 8px 40px;"><img
-			src="images/logo.png" /></a>
+			src="images/decision-logo.png" /></a>
+			<#--src="images/logo.png" /></a>-->
 	</div>
 	<div class="col-md-12 list-left"
 		style="background: #222d32; height: 845px">
