@@ -5,11 +5,27 @@ server:
 #  servlet:
 #    context-path: decision_sys
 spring:
-  # 本地库
+  # 本地库 mysql
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/decision_sys?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
     password: 123456
+  # mongodb
+  data:
+    mongodb:
+#      host: 127.0.0.1
+#      port: 27017
+#      username: root
+#      password: root
+#      database: wzw
+#      authentication-database: admin
+      # fsgo
+      host: 39.104.117.73
+      port: 27017
+      username: fsgo
+      password: i@8fmhY7!m3FkwJ*
+      database: fsgo
+      authentication-database: admin
   devtools:
     restart:
       # 热部署

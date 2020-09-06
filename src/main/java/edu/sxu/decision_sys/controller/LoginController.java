@@ -56,8 +56,8 @@ public class LoginController {
         Menu menu01 = new Menu("01","信息管理","#","glyphicon-book","0",1);
         Menu menu0101 = new Menu("0101","专家管理","#","glyphicon-record","01",1);
         Menu menu0102 = new Menu("0102","方案管理","#","glyphicon-record","01",2);
-        Menu menu02 = new Menu("02","测试管理","#","glyphicon-cog","0",2);
-        Menu menu0201 = new Menu("0201","测试1","#","glyphicon-record","02",1);
+        Menu menu02 = new Menu("02","用户管理","#","glyphicon-cog","0",2);
+        Menu menu0201 = new Menu("0201","用户管理","#","glyphicon-record","02",1);
         Menu menu0202 = new Menu("0202","测试2","#","glyphicon-record","02",2);
         List<Menu> menuListOne = new ArrayList<>();
         List<Menu> menuListTwo = new ArrayList<>();
