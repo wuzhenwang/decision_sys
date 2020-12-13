@@ -20,45 +20,112 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %l - %msg%n" />
         </Console>
+        <!--文件会打印出所有信息，这个log每次运行程序会自动清空，由append属性决定，这个也挺有用的，适合临时测试用-->
+        <File name="File_devTest" fileName="${LOG_HOME}/${FILE_NAME}_devTest.log" append="false">
+            <!--<PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] %-5level %class{36} %L %M - %msg%xEx%n"/>-->
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%p] - %l - %msg%xEx%n"/>
+        </File>
+        <!-- 这个会打印出所有的info及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <!--immediateFlush：log4j2接收到日志事件时，是否立即将日志刷到磁盘。默认为true-->
+        <RollingFile name="RollingFileInfo" immediateFlush="true"
+                     fileName="${LOG_HOME}/${FILE_NAME}_info.log"
+                     filePattern="${LOG_HOME}/$${date:yyyy-MM}/info-${FILE_NAME}-%d{yyyy-MM-dd}-%i.zip">
+            <Filters>
+                <!-- >= WARN级别的，拒绝！-->
+                <ThresholdFilter level="warn"  onMatch="DENY" onMismatch="NEUTRAL"/>
+                <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+            <!--<PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %l - %msg%n"/>-->
+            <Policies>
+                <!--interval：表示历史日志封存间隔时间，单位为filePattern设置的单位值
+                    modulate：表示是否历史日志生成时间纠偏，纠偏以零点为基准进行。比如：15:16生成了msg.2017041715.zip文件，那么纠偏后会在16:00生成msg.2017041716.zip-->
+                <!--比如具体到小时输出日志时，以零点为准，可以设置间隔和纠偏，本次单位为filePattern设置的单位值 天，不需要设置间隔和纠偏-->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <!--<TimeBasedTriggeringPolicy/>-->
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <!--保存文件数20个-->
+            <DefaultRolloverStrategy max="20">
+                <!--age的单位：D、H、M、S，分别表示天、小时、分钟、秒
+                    basePath表示日志存储的基目录，
+                    maxDepth=“1”表示当前目录。因为我们封存的历史日志在basePath里面的logger下的年月目录，所以maxDepth设置为2。-->
+                <Delete basePath="${LOG_HOME}" maxDepth="2">
+                    <IfFileName glob="*/msg.*.zip" />
+                    <IfLastModified age="1D" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+        <RollingFile name="RollingFileWarn"
+                     fileName="${LOG_HOME}/${FILE_NAME}_warn.log"
+                     filePattern="${LOG_HOME}/$${date:yyyy-MM}/warn-${FILE_NAME}-%d{yyyy-MM-dd}-%i.zip">
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <!-- DefaultRolloverStrategy属性如不设置，则默认为最多同一文件夹下7个文件，这里设置了20 -->
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile>
+        <RollingFile name="RollingFileError"
+                     fileName="${LOG_HOME}/${FILE_NAME}_error.log"
+                     filePattern="${LOG_HOME}/$${date:yyyy-MM}/error-${FILE_NAME}-%d{yyyy-MM-dd}-%i.zip">
+            <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss:SSS}] [%p] - %l - %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile>
+
 
         <!--immediateFlush：log4j2接收到日志事件时，是否立即将日志刷到磁盘。默认为true-->
+<!--
         <RollingFile name="RollingFile" immediateFlush="true"
                                  fileName="${LOG_HOME}/${FILE_NAME}.log"
                                  filePattern="${LOG_HOME}/$${date:yyyy-MM}/${FILE_NAME}-%d{yyyy-MM-dd HH}-%i.zip">
 
-            <!--level，表示最低接受的日志级别，博客配置的为INFO，即我们期望打印INFO级别以上的日志。
+            &lt;!&ndash;level，表示最低接受的日志级别，博客配置的为INFO，即我们期望打印INFO级别以上的日志。
                 onMatch，表示当日志事件的日志级别与level一致时，应怎么做。一般为ACCEPT，表示接受。
-                onMismatch，表示日志事件的日志级别与level不一致时，应怎么做。一般为DENY，表示拒绝。也可以为NEUTRAL表示中立-->
+                onMismatch，表示日志事件的日志级别与level不一致时，应怎么做。一般为DENY，表示拒绝。也可以为NEUTRAL表示中立&ndash;&gt;
             <Filters>
                 <ThresholdFilter level="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             </Filters>
 
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %l - %msg%n"/>
-            <!--interval：表示历史日志封存间隔时间，单位为filePattern设置的单位值
-                modulate：表示是否历史日志生成时间纠偏，纠偏以零点为基准进行。比如：15:16生成了msg.2017041715.zip文件，那么纠偏后会在16:00生成msg.2017041716.zip-->
+            &lt;!&ndash;interval：表示历史日志封存间隔时间，单位为filePattern设置的单位值
+                modulate：表示是否历史日志生成时间纠偏，纠偏以零点为基准进行。比如：15:16生成了msg.2017041715.zip文件，那么纠偏后会在16:00生成msg.2017041716.zip&ndash;&gt;
             <Policies>
                 <TimeBasedTriggeringPolicy interval="12" modulate="true"/>
                 <SizeBasedTriggeringPolicy size="10 MB"/>
             </Policies>
 
-            <!--保存文件数24个-->
+            &lt;!&ndash;保存文件数24个&ndash;&gt;
             <DefaultRolloverStrategy max="24">
-                <!--age的单位：D、H、M、S，分别表示天、小时、分钟、秒
+                &lt;!&ndash;age的单位：D、H、M、S，分别表示天、小时、分钟、秒
                     basePath表示日志存储的基目录，
-                    maxDepth=“1”表示当前目录。因为我们封存的历史日志在basePath里面的logger目录，所以maxDepth设置为2。-->
+                    maxDepth=“1”表示当前目录。因为我们封存的历史日志在basePath里面的logger目录，所以maxDepth设置为2。&ndash;&gt;
                 <Delete basePath="${LOG_HOME}" maxDepth="2">
                     <IfFileName glob="*/msg.*.zip" />
                     <IfLastModified age="24H" />
                 </Delete>
-            </DefaultRolloverStrategy>>
+            </DefaultRolloverStrategy>
         </RollingFile>
+-->
     </Appenders>
 
     <Loggers>
         <logger name="org.apache.http" level="warn" />
-        <!-- Spring -->
+        <!--过滤掉spring和mybatis的一些无用的DEBUG信息-->
         <logger name="org.springframework" level="WARN" />
         <!-- mybatis loggers -->
+        <logger name="org.mybatis" level="INFO"></logger>
         <logger name="com.ibatis" level="DEBUG" />
         <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG" />
         <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG" />
@@ -77,7 +144,10 @@
 
         <Root level="info">
             <AppenderRef ref="Console" />
-            <AppenderRef ref="RollingFile" />
+            <AppenderRef ref="File_devTest" />
+            <AppenderRef ref="RollingFileInfo" />
+            <AppenderRef ref="RollingFileWarn" />
+            <AppenderRef ref="RollingFileError" />
         </Root>
     </Loggers>
 </Configuration>
