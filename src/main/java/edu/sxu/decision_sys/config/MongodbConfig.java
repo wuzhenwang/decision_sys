@@ -7,6 +7,7 @@ import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.lang.NonNull;
+import edu.osg.framework.mongodb.EmongoTemplate;
 import org.bson.types.Decimal128;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +17,6 @@ import org.springframework.data.convert.ReadingConverter;
 import org.springframework.data.convert.WritingConverter;
 import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDbFactory;
 import org.springframework.data.mongodb.core.convert.DefaultDbRefResolver;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
@@ -82,8 +82,8 @@ public class MongodbConfig extends AbstractMongoClientConfiguration {
     }
 
     @Bean
-    public MongoTemplate mongoTemplate() throws Exception {
-        return new MongoTemplate(this.mongoDbFactory(), this.mappingMongoConverter());
+    public EmongoTemplate mongoTemplate() throws Exception {
+        return new EmongoTemplate(this.mongoDbFactory(), this.mappingMongoConverter());
     }
 
     @Bean(name = "mongoDbFactory")

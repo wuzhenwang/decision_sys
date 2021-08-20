@@ -27,10 +27,21 @@
         </File>
         <!-- 这个会打印出所有的info及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
         <!--immediateFlush：log4j2接收到日志事件时，是否立即将日志刷到磁盘。默认为true-->
+        <!--    name：Appender的名字
+                fileName：日志输出目的文件名
+                filePattern：指定打包的日志文件的格式，文件的压缩格式支持的后缀名：".gz",".zip",".bz2",".xz";-->
         <RollingFile name="RollingFileInfo" immediateFlush="true"
                      fileName="${LOG_HOME}/${FILE_NAME}_info.log"
                      filePattern="${LOG_HOME}/$${date:yyyy-MM}/info-${FILE_NAME}-%d{yyyy-MM-dd}-%i.zip">
             <Filters>
+                <!--onMatch和onMismatch都有三个属性值，分别为Accept、DENY和NEUTRAL
+                    分别介绍这两个配置项的三个属性值：
+                    onMatch="ACCEPT" 表示匹配该级别及以上
+                    onMatch="DENY" 表示不匹配该级别及以上
+                    onMatch="NEUTRAL" 表示该级别及以上的，由下一个filter处理，如果当前是最后一个，则表示匹配该级别及以上
+                    onMismatch="ACCEPT" 表示匹配该级别以下
+                    onMismatch="NEUTRAL" 表示该级别及以下的，由下一个filter处理，如果当前是最后一个，则不匹配该级别以下的
+                    onMismatch="DENY" 表示不匹配该级别以下的 -->
                 <!-- >= WARN级别的，拒绝！-->
                 <ThresholdFilter level="warn"  onMatch="DENY" onMismatch="NEUTRAL"/>
                 <!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）-->
@@ -45,6 +56,8 @@
                 <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
                 <!--<TimeBasedTriggeringPolicy/>-->
                 <SizeBasedTriggeringPolicy size="20 MB"/>
+                <!-- 日志文件比当前jvm启动时间更早就会触发压缩日志文件 -->
+                <OnStartupTriggeringPolicy />
             </Policies>
             <!--保存文件数20个-->
             <DefaultRolloverStrategy max="20">
@@ -52,8 +65,12 @@
                     basePath表示日志存储的基目录，
                     maxDepth=“1”表示当前目录。因为我们封存的历史日志在basePath里面的logger下的年月目录，所以maxDepth设置为2。-->
                 <Delete basePath="${LOG_HOME}" maxDepth="2">
+                    <!-- 要删除的日志的名称匹配 -->
                     <IfFileName glob="*/msg.*.zip" />
+                    <!-- 保留文件的天数 -->
                     <IfLastModified age="1D" />
+                    <!-- 保留文件的个数 -->
+                    <IfAccumulatedFileCount  exceeds="10" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
@@ -119,7 +136,7 @@
         </RollingFile>
 -->
     </Appenders>
-
+    <!--然后定义logger，只有定义了logger并引入的appender，appender才会生效-->
     <Loggers>
         <logger name="org.apache.http" level="warn" />
         <!--过滤掉spring和mybatis的一些无用的DEBUG信息-->

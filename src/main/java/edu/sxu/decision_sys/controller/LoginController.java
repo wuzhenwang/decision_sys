@@ -2,6 +2,8 @@ package edu.sxu.decision_sys.controller;
 
 import edu.sxu.decision_sys.entity.Menu;
 import edu.sxu.decision_sys.entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +21,7 @@ import java.util.Map;
  */
 @Controller
 public class LoginController {
+    private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     /**
      * 首次路径访问
